@@ -4,7 +4,16 @@ MovieLens 32M data engineering pipeline for a film recommendation project. Analy
 
 ## Status
 
-The pipeline is prepared but has not yet been executed or validated on Databricks. No results or exported data are claimed until a successful run is inspected.
+The full pipeline and an independent validation notebook completed successfully on Databricks on 20 November 2026. Analytics, models, and the application remain to be developed by their respective workstreams.
+
+| Dataset | Bronze rows | Silver rows | Removed |
+| --- | ---: | ---: | ---: |
+| Movies | 87,585 | 87,585 | 0 |
+| Ratings | 32,000,204 | 32,000,204 | 0 |
+| Tags | 2,000,072 | 2,000,072 | 0 |
+| Links | 87,585 | 87,585 | 0 |
+
+The validation checked official counts for movies, ratings and tags; movie key uniqueness; required rating and tag fields, rating range and increments; referential integrity; interaction counts; and read-back counts for each Parquet export. Row-count reconciliation does not establish byte-for-byte equality between Silver and exports. See [validation](databricks/validate.py).
 
 ## Architecture
 
@@ -22,13 +31,17 @@ The dataset is provided by [GroupLens](https://grouplens.org/datasets/movielens/
 
 ## Team workspace
 
-The project namespace is `workspace.cinematch`, with volume `workspace.cinematch.data`. The shared notebook is `/Shared/CineMatch/pipeline`; the saved job is `CineMatch - MovieLens data pipeline`. Run it from the Databricks Jobs UI or, using an authenticated profile:
+The project namespace is `workspace.cinematch`, with volume `workspace.cinematch.data`. The shared notebooks are `/Shared/CineMatch/pipeline` and `/Shared/CineMatch/validate`; the saved job is `CineMatch - MovieLens data pipeline`. The validation task runs after the pipeline task. Run it from the Databricks Jobs UI or, using an authenticated profile:
 
 ```bash
 databricks jobs run-now 373620772051605 -p ucu
 ```
 
 The schema includes `bronze_movies`, `bronze_ratings`, `bronze_tags`, `bronze_links`, their `silver_` equivalents, and `gold_movie_stats`, `gold_movie_genres`, `gold_interactions`, and `gold_quality_report` after a successful run. Movie statistics use all timestamps and are intended for descriptive analysis only. Define train/validation/test cutoffs before fitting or evaluating recommendation models.
+
+## Limitations
+
+Source records are processed as a batch, and the pipeline downloads the full archive on each run. Outputs are overwritten sequentially; failed or concurrent runs can expose incomplete or mixed versions. The saved job permits one run at a time, but manually started notebooks require coordination. Quality counts combine rejected and duplicate records rather than reporting each reason. Team access is scoped to the project schema and includes modifying tables and volume files. Dataset exports remain subject to GroupLens research and redistribution conditions, including restrictions on commercial use.
 
 ## AI disclosure
 
