@@ -1,0 +1,16 @@
+{
+  "name": "CineMatch - MovieLens data pipeline",
+  "max_concurrent_runs": 1,
+  "timeout_seconds": 10800,
+  "tasks": [
+    {
+      "task_key": "pipeline",
+      "notebook_task": {"notebook_path": "/Shared/CineMatch/pipeline", "source": "WORKSPACE"}
+    },
+    {
+      "task_key": "validate",
+      "depends_on": [{"task_key": "pipeline"}],
+      "notebook_task": {"notebook_path": "/Shared/CineMatch/validate", "source": "WORKSPACE"}
+    }
+  ]
+}

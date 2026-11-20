@@ -25,7 +25,7 @@ Exports are Spark Parquet **directories** at `exports/movies.parquet`, `exports/
 
 ## Run
 
-Import `databricks/pipeline.py` as a Databricks notebook and run on a compatible compute with outbound access to GroupLens and Unity Catalog permissions to create a schema, managed volume and tables. Set notebook widgets `catalog` and `schema` to an authorized namespace; defaults are `workspace` and `cinematch`. The identity executing the notebook owns its created objects, so arrange project-scoped access before team use. A complete run downloads the full dataset and can incur compute and storage charges. Verify the run, row counts, access and exports before relying on the results. If compute lacks outbound access, stage the official archive through an approved route and adapt ingestion.
+Import `databricks/pipeline.py` and `databricks/validate.py` as Databricks notebooks and run on a compatible compute with outbound access to GroupLens and Unity Catalog permissions to create a schema, managed volume and tables. Set notebook widgets `catalog` and `schema` to an authorized namespace; defaults are `workspace` and `cinematch`. The identity executing the notebook owns its created objects, so arrange project-scoped access before team use. The notebooks use the Python standard library and PySpark provided by Databricks; see `requirements.txt`. A complete run downloads the full dataset and can incur compute and storage charges. Verify the run, row counts, access and exports before relying on the results. If compute lacks outbound access, stage the official archive through an approved route and adapt ingestion.
 
 The dataset is provided by [GroupLens](https://grouplens.org/datasets/movielens/32m/); consult the [dataset README and terms](https://files.grouplens.org/datasets/movielens/ml-32m-README.html) before redistribution. Cite Harper and Konstan, *The MovieLens Datasets: History and Context*, DOI [10.1145/2827872](https://doi.org/10.1145/2827872).
 
@@ -36,6 +36,8 @@ The project namespace is `workspace.cinematch`, with volume `workspace.cinematch
 ```bash
 databricks jobs run-now 373620772051605 -p ucu
 ```
+
+To reproduce the saved job in another workspace, import both notebooks at the paths in `databricks/job.json`, then run `databricks jobs create --json @databricks/job.json -p <profile>`. Adjust paths and notebook widget defaults for the target workspace.
 
 The schema includes `bronze_movies`, `bronze_ratings`, `bronze_tags`, `bronze_links`, their `silver_` equivalents, and `gold_movie_stats`, `gold_movie_genres`, `gold_interactions`, and `gold_quality_report` after a successful run. Movie statistics use all timestamps and are intended for descriptive analysis only. Define train/validation/test cutoffs before fitting or evaluating recommendation models.
 

@@ -1,0 +1,2 @@
+# The notebooks use Python's standard library and PySpark supplied by Databricks.
+# Run on Databricks with Unity Catalog and a serverless-compatible Spark runtime.
