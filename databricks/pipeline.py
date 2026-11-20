@@ -48,7 +48,7 @@ with tempfile.TemporaryDirectory() as tmp:
                     digest.update(chunk)
             if digest.hexdigest() != checksums[name]:
                 raise ValueError(f'Checksum mismatch for {name}')
-            dbutils.fs.cp('file:' + os.path.join(tmp, name), f'{raw}/{name}')
+            shutil.copyfile(os.path.join(tmp, name), f'{raw}/{name}')
 
 # COMMAND ----------
 columns = {
